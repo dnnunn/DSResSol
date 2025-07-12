@@ -13,6 +13,13 @@
 - Added `INSTALLATION.md` manual installation guide with troubleshooting tips.
 - Added this `CHANGELOG.md` for tracking all future environment and setup changes.
 
+## [2025-07-12]
+### Output Integration for PeptideFrontEnd Compatibility
+- Refactored prediction output to CSV columns: `name`, `sequence`, `solubility`, `prediction`.
+- FASTA input headers and CSV `name` columns are preserved as `name` in output for traceability.
+- Output matches PeptideFrontEnd GA and solubility predictor interface requirements.
+- No further adaptation or renaming required for GA integration.
+
 ---
 
 ## [Older]

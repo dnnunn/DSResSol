@@ -20,21 +20,26 @@ from lib.Util import Util
 
 def read_fasta(fasta_path):
     seqs = []
+    headers = []
     with open(fasta_path, 'r') as f:
         seq = ''
+        header = None
         for line in f:
             line = line.strip()
             if not line:
                 continue
             if line.startswith('>'):
-                if seq:
+                if seq and header is not None:
                     seqs.append(seq)
+                    headers.append(header)
                     seq = ''
+                header = line[1:]  # Remove '>'
             else:
                 seq += line
-        if seq:
+        if seq and header is not None:
             seqs.append(seq)
-    return pd.DataFrame({'Seq': seqs})
+            headers.append(header)
+    return pd.DataFrame({'name': headers, 'Seq': seqs})
 
 def main():
     parser = argparse.ArgumentParser(description='Batch solubility prediction for DSResSol')
@@ -78,14 +83,11 @@ def main():
         solubility = y_pred.flatten() if len(y_pred.shape) == 2 and y_pred.shape[1] == 1 else y_pred
         prediction = np.where(solubility >= 0.5, 'soluble', 'insoluble')
 
-    # Assign names: if FASTA, use header, else use index or 'Unknown'
-    if 'Name' in df.columns:
-        names = df['Name']
-    elif 'name' in df.columns:
+    # Assign names: always use 'name' column if present (FASTA or CSV with names)
+    if 'name' in df.columns:
         names = df['name']
-    elif 'Seq' in df.columns:
-        # Try to parse FASTA header from Seq if possible
-        names = ['Unknown'] * len(df)
+    elif 'Name' in df.columns:
+        names = df['Name']
     else:
         names = ['Unknown'] * len(df)
 
