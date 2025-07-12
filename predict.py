@@ -69,20 +69,19 @@ def main():
     y_pred = model.predict(X)
     print("Raw model output:", y_pred)
 
-    # Save raw and processed predictions for inspection
-    if len(y_pred.shape) == 2 and y_pred.shape[1] == 1:
-        df['PredictedSolubility'] = y_pred.flatten()
-    elif len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
-        # Likely softmax [insoluble, soluble], take the second column as probability
-        df['PredictedSolubility'] = y_pred[:, 1]
+    if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
+        # Output both probabilities for clarity
+        df['SolubleProbability'] = y_pred[:, 0]
+        df['InsolubleProbability'] = y_pred[:, 1]
+        df['PredictedLabel'] = np.where(y_pred[:, 0] > y_pred[:, 1], 'Soluble', 'Insoluble')
+        df['PredictedSolubility_Binary'] = (y_pred[:, 0] > y_pred[:, 1]).astype(int)
+        output_cols = ['Seq', 'SolubleProbability', 'InsolubleProbability', 'PredictedLabel', 'PredictedSolubility_Binary']
     else:
-        df['PredictedSolubility'] = y_pred
+        # Fallback for other output shapes
+        df['PredictedSolubility'] = y_pred.flatten() if len(y_pred.shape) == 2 and y_pred.shape[1] == 1 else y_pred
+        df['PredictedSolubility_Binary'] = (df['PredictedSolubility'] > 0.5).astype(int)
+        output_cols = ['Seq', 'PredictedSolubility', 'PredictedSolubility_Binary']
 
-    # Add a binary threshold column for classification (0.5 cutoff)
-    df['PredictedSolubility_Binary'] = (df['PredictedSolubility'] > 0.5).astype(int)
-
-    # Output
-    output_cols = ['Seq', 'PredictedSolubility', 'PredictedSolubility_Binary']
     if args.output:
         df[output_cols].to_csv(args.output, index=False)
         print(f'Predictions written to {args.output}')
