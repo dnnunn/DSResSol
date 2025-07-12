@@ -69,24 +69,46 @@ def main():
     y_pred = model.predict(X)
     print("Raw model output:", y_pred)
 
+    # Prepare PeptideFrontEnd-compatible output
     if len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
-        # Output both probabilities for clarity
-        df['SolubleProbability'] = y_pred[:, 0]
-        df['InsolubleProbability'] = y_pred[:, 1]
-        df['PredictedLabel'] = np.where(y_pred[:, 0] > y_pred[:, 1], 'Soluble', 'Insoluble')
-        df['PredictedSolubility_Binary'] = (y_pred[:, 0] > y_pred[:, 1]).astype(int)
-        output_cols = ['Seq', 'SolubleProbability', 'InsolubleProbability', 'PredictedLabel', 'PredictedSolubility_Binary']
+        # Assume column 0 = soluble probability
+        solubility = y_pred[:, 0]
+        prediction = np.where(solubility >= 0.5, 'soluble', 'insoluble')
     else:
-        # Fallback for other output shapes
-        df['PredictedSolubility'] = y_pred.flatten() if len(y_pred.shape) == 2 and y_pred.shape[1] == 1 else y_pred
-        df['PredictedSolubility_Binary'] = (df['PredictedSolubility'] > 0.5).astype(int)
-        output_cols = ['Seq', 'PredictedSolubility', 'PredictedSolubility_Binary']
+        solubility = y_pred.flatten() if len(y_pred.shape) == 2 and y_pred.shape[1] == 1 else y_pred
+        prediction = np.where(solubility >= 0.5, 'soluble', 'insoluble')
+
+    # Assign names: if FASTA, use header, else use index or 'Unknown'
+    if 'Name' in df.columns:
+        names = df['Name']
+    elif 'name' in df.columns:
+        names = df['name']
+    elif 'Seq' in df.columns:
+        # Try to parse FASTA header from Seq if possible
+        names = ['Unknown'] * len(df)
+    else:
+        names = ['Unknown'] * len(df)
+
+    # Sequence column
+    if 'Seq' in df.columns:
+        sequences = df['Seq']
+    elif 'sequence' in df.columns:
+        sequences = df['sequence']
+    else:
+        sequences = [''] * len(df)
+
+    output_df = pd.DataFrame({
+        'name': names,
+        'sequence': sequences,
+        'solubility': solubility,
+        'prediction': prediction
+    })
 
     if args.output:
-        df[output_cols].to_csv(args.output, index=False)
+        output_df.to_csv(args.output, index=False)
         print(f'Predictions written to {args.output}')
     else:
-        print(df[output_cols].to_csv(index=False))
+        print(output_df.to_csv(index=False))
 
 if __name__ == '__main__':
     main()
