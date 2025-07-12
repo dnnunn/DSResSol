@@ -3,7 +3,6 @@ channels:
   - defaults
   - conda-forge
 dependencies:
-  - _tflow_select=2.3.0=gpu
   - absl-py=0.13.0=py37haa95532_0
   - aiohttp=3.7.4=py37h2bbff1b_1
   - astor=0.8.1=py37haa95532_0
