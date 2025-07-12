@@ -67,18 +67,27 @@ def main():
     # Load model
     model = load_model(args.model)
     y_pred = model.predict(X)
-    if y_pred.shape[1] == 1:
-        y_pred = y_pred.flatten()
+    print("Raw model output:", y_pred)
+
+    # Save raw and processed predictions for inspection
+    if len(y_pred.shape) == 2 and y_pred.shape[1] == 1:
+        df['PredictedSolubility'] = y_pred.flatten()
+    elif len(y_pred.shape) == 2 and y_pred.shape[1] == 2:
+        # Likely softmax [insoluble, soluble], take the second column as probability
+        df['PredictedSolubility'] = y_pred[:, 1]
     else:
-        y_pred = y_pred.argmax(axis=1)
-    df['PredictedSolubility'] = y_pred
+        df['PredictedSolubility'] = y_pred
+
+    # Add a binary threshold column for classification (0.5 cutoff)
+    df['PredictedSolubility_Binary'] = (df['PredictedSolubility'] > 0.5).astype(int)
 
     # Output
+    output_cols = ['Seq', 'PredictedSolubility', 'PredictedSolubility_Binary']
     if args.output:
-        df[['Seq', 'PredictedSolubility']].to_csv(args.output, index=False)
+        df[output_cols].to_csv(args.output, index=False)
         print(f'Predictions written to {args.output}')
     else:
-        print(df[['Seq', 'PredictedSolubility']].to_csv(index=False))
+        print(df[output_cols].to_csv(index=False))
 
 if __name__ == '__main__':
     main()
