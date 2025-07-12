@@ -40,7 +40,7 @@ dependencies:
   - icu=58.2
   - idna=2.10
   - importlib-metadata=3.10.0
-  - intelpython=2021.3.0=7
+  - 
   - ipykernel=5.3.4
   - ipython=7.22.0
   - ipython_genutils=0.2.0=pyhd3eb1b0_1
