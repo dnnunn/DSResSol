@@ -28,8 +28,8 @@ dependencies:
   - cudnn=7.6.5
   - cycler=0.10.0
   - cython=0.29.24
-  - daal4py=2021.3.0
-  - dal=2021.3.0
+  - 
+  - 
   - decorator=5.0.9
   - freetype=2.10.4
   - gast=0.3.3=py_0
@@ -39,11 +39,11 @@ dependencies:
   - grpcio=1.36.1
   - h5py=2.10.0
   - hdf5=1.10.4
-  - icc_rt=2019.0.0
+  - 
   - icu=58.2
   - idna=2.10
   - importlib-metadata=3.10.0
-  - intel-openmp=2021.3.0
+  - 
   - intelpython=2021.3.0=7
   - ipykernel=5.3.4
   - ipython=7.22.0
@@ -91,12 +91,12 @@ dependencies:
   - pyopenssl=20.0.1
   - pyparsing=2.4.7
   - pyqt=5.9.2
-  - pyreadline=2.1
+  - 
   - pysocks=1.7.1
   - python=3.7.10
   - python-dateutil=2.8.2=pyhd3eb1b0_0
   - pytz=2021.1=pyhd3eb1b0_0
-  - pywin32=227
+  - 
   - pyyaml=5.4.1
   - pyzmq=20.0.0=py37hd77b12b_1
   - qt=5.9.7=vc14h73c81de_0
@@ -126,8 +126,8 @@ dependencies:
   - typing-extensions=3.10.0.0=hd3eb1b0_0
   - typing_extensions=3.10.0.0=pyh06a4308_0
   - urllib3=1.26.6=pyhd3eb1b0_1
-  - vc=14.2=h21ff451_1
-  - vs2015_runtime=14.27.29016=h5e58377_2
+  - =h21ff451_1
+  - =h5e58377_2
   - wcwidth=0.2.5=py_0
   - werkzeug=1.0.1=pyhd3eb1b0_0
   - wheel=0.36.2=pyhd3eb1b0_0
